@@ -14,6 +14,8 @@ const STUDENTS = Object.freeze({
   "26521623": "Lê Trần Thiên Phúc",
   "26521429": "Trương Nam Nguyên",
   "21703244": "Trần Thảo Vy",
+  "01000280": "Trần Diệu Thảo",
+  "25520471": "Lê Nguyễn Thu Hà",
   "26521177": "Lương Ý Ly"
 });
 let recipient = null;
