@@ -278,6 +278,7 @@ function bloom() {
     $("#hero-flower .flower-art").classList.remove("is-bud");
     $("#hero-flower").classList.add("bloomed");
     burstAt($("#hero-flower"), 35, 1);
+    soundtrack.chime(0);
   }, 450);
   later(() => finishBloom(), 2350);
 }
@@ -319,7 +320,7 @@ function finishLetter(focus = true) {
 function openLetter() {
   if (state.letterOpen || state.letterOpening || state.transitioning) return;
   state.letterOpening = true;
-  soundtrack.chime(2);
+  soundtrack.paper();
   $("#envelope").disabled = true;
   $("#envelope").setAttribute("aria-expanded", "true");
   $("#letter-stage").classList.add("is-open");
@@ -575,6 +576,14 @@ function setupParallax() {
 }
 
 function bindEvents() {
+  document.addEventListener("click", event => {
+    if (!(event.target instanceof Element)) return;
+    const control = event.target.closest("button, a.button, #home-link");
+    if (!control || control.disabled || state.transitioning) return;
+    // Dedicated interactions have their own sounds; avoid stacking a click on top.
+    if (control.matches("#sound-toggle, #bloom-button, #bloom-flower, .garden-flower, #envelope, #gift, #magic-button, #more-love, #wish-form button")) return;
+    soundtrack.click();
+  }, { capture: true });
   $("#entry-form").addEventListener("submit", enterGarden);
   $("#student-id").addEventListener("input", () => {
     $("#entry-error").textContent = "";
@@ -646,16 +655,60 @@ function bindEvents() {
 // through chapter changes and replay (in memory only).
 const soundtrack = (() => {
   let context, master, compressor, enabled = false, mutedByUser = false;
-  let playRequest = 0, lastChime = -Infinity;
+  let playRequest = 0, lastChime = -Infinity, lastClick = -Infinity;
+  let duckFrame = 0, duckUntil = 0, noiseBuffer;
+  const MUSIC_VOLUME = .45;
   const music = new Audio("./music.mp3");
   music.preload = "none";
   music.loop = true;
-  music.volume = .45;
+  music.volume = MUSIC_VOLUME;
   const voices = new Set();
   function update() {
     $("#sound-toggle").setAttribute("aria-pressed", String(enabled));
     $("#sound-toggle").setAttribute("aria-label", enabled ? "Tắt nhạc nền và âm thanh" : "Bật nhạc nền và âm thanh");
     $("#sound-label").textContent = enabled ? "nhạc đang ngân" : "bật nhạc";
+  }
+  function ready() { return enabled && context?.state === "running" && !document.hidden; }
+  function duck(duration = 400) {
+    duckUntil = Math.max(duckUntil, performance.now() + duration);
+    if (duckFrame) return;
+    let previous = performance.now();
+    function fade(now) {
+      if (!ready()) { duckFrame = 0; music.volume = MUSIC_VOLUME; return; }
+      const target = now < duckUntil ? .33 : MUSIC_VOLUME;
+      const elapsed = Math.min(now - previous, 80); previous = now;
+      music.volume += (target - music.volume) * (1 - Math.exp(-elapsed / (target < music.volume ? 45 : 180)));
+      if (now >= duckUntil && Math.abs(music.volume - MUSIC_VOLUME) < .002) {
+        music.volume = MUSIC_VOLUME; duckFrame = 0; return;
+      }
+      duckFrame = requestAnimationFrame(fade);
+    }
+    duckFrame = requestAnimationFrame(fade);
+  }
+  function click() {
+    if (!ready() || context.currentTime - lastClick < .09) return;
+    lastClick = context.currentTime;
+    // A soft, very short wooden tap, without a sustained competing pitch.
+    note(67, lastClick, .065, .15);
+    note(79, lastClick + .006, .045, .025);
+    duck(90);
+  }
+  function paper() {
+    if (!ready() || voices.size >= 30 || context.currentTime - lastChime < .35) return;
+    lastChime = context.currentTime;
+    if (!noiseBuffer) {
+      noiseBuffer = context.createBuffer(1, Math.ceil(context.sampleRate * .35), context.sampleRate);
+      const samples = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+    }
+    const source = context.createBufferSource(), filter = context.createBiquadFilter(), gain = context.createGain();
+    source.buffer = noiseBuffer; filter.type = "bandpass"; filter.frequency.value = 1400; filter.Q.value = .65;
+    const now = context.currentTime;
+    gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(.11, now + .045);
+    gain.gain.exponentialRampToValueAtTime(.0001, now + .32);
+    source.connect(filter); filter.connect(gain); gain.connect(master); voices.add(source);
+    source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); voices.delete(source); };
+    source.start(now); source.stop(now + .35); duck(350);
   }
   function note(midi, time, duration = 1.8, volume = .12) {
     if (!midi || !context || voices.size >= 36) return;
@@ -700,6 +753,7 @@ const soundtrack = (() => {
   function pause() {
     playRequest++;
     music.pause();
+    cancelAnimationFrame(duckFrame); duckFrame = 0; duckUntil = 0; music.volume = MUSIC_VOLUME;
     voices.forEach(voice => { try { voice.stop(); } catch { /* already stopped */ } });
     if (context && context.state === "running") context.suspend().catch(() => {});
   }
@@ -708,8 +762,10 @@ const soundtrack = (() => {
     const now = context.currentTime;
     if (now - lastChime < .35) return;
     lastChime = now;
-    const pitches = kind === 6 ? [72,76,79,84,88,91] : [76 + kind % 3,79 + kind % 3,84 + kind % 3];
-    pitches.forEach((pitch, i) => note(pitch, now + i * .12, 1.6, .11));
+    const motifs = [[79,84], [76,79], [72,79], [79,84,88], [76,79,84], [79,84,88], [72,76,79,84]];
+    const pitches = motifs[kind % motifs.length];
+    pitches.forEach((pitch, i) => note(pitch, now + i * .09, .7, .075));
+    duck(pitches.length * 90 + 350);
   }
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) pause();
@@ -723,7 +779,7 @@ const soundtrack = (() => {
       if (enabled) { enabled = false; mutedByUser = true; pause(); update(); }
       else { mutedByUser = false; activate(); }
     },
-    chime
+    chime, click, paper
   };
 })();
 
