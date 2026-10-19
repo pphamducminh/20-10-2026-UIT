@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff0f5">
+  <meta name="description" content="Một khu vườn nhỏ, sáu điều bất ngờ và thật nhiều yêu thương dành cho các cô gái của lớp mình. Happy 20/10!">
+  <title>Blooming Wishes — Một chút dịu dàng, dành riêng cho bạn</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Đến nội dung</a>
+  <canvas id="petal-canvas" aria-hidden="true"></canvas>
+  <div class="page-frame" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="wordmark" href="#" id="home-link" aria-label="Blooming Wishes — về chương đầu">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2"><path d="M20 22C5 22 5 7 14 10c-3-12 15-12 12 0 9-3 9 12-6 12Z"/><path d="M20 12v23m0-7c-9 1-12-6-12-6 8-1 12 6 12 6Zm0 5c8 0 11-7 11-7-8 0-11 7-11 7Z"/></g></svg>
+      <span>blooming wishes<span class="wordmark-sub">a little garden, a lot of love</span></span>
+    </a>
+    <div class="header-note"><button class="sound-toggle" id="sound-toggle" aria-pressed="false" aria-label="Bật nhạc nền"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="sound-label">bật nhạc</span></button><span>JUST FOR OUR LOVELY GIRLS</span><span class="date-tag">20 <i>/</i> 10</span></div>
+  </header>
+
+  <section class="entry-gate" id="entry-gate" aria-labelledby="entry-title">
+    <div class="entry-card">
+      <div class="entry-flower" id="entry-flower" aria-hidden="true"></div>
+      <p class="eyebrow">A LITTLE GARDEN, JUST FOR YOU</p>
+      <h1 id="entry-title">Có một bó hoa<br>đang đợi <em>bạn.</em></h1>
+      <p class="scene-description">Nhập mã số sinh viên để mở món quà dành riêng cho mình nhé ♡</p>
+      <form id="entry-form" novalidate>
+        <label for="student-id">Mã số sinh viên</label>
+        <input id="student-id" name="student-id" type="text" inputmode="numeric" autocomplete="off" maxlength="8" pattern="[0-9]{8}" placeholder="Nhập 8 chữ số" aria-describedby="entry-error" required>
+        <p class="field-error" id="entry-error" role="alert"></p>
+        <button class="button primary" type="submit">mở khu vườn của mình <span aria-hidden="true">♡</span></button>
+      </form>
+      <p class="microcopy">Một món quà nhỏ cho những cô gái của lớp mình.</p>
+    </div>
+  </section>
+  <main id="main" tabindex="-1" hidden>
+    <div class="floral-frame" id="floral-frame" aria-hidden="true"></div>
+    <section class="scene scene-intro is-active" id="scene-0" aria-labelledby="intro-title">
+      <div class="scene-content intro-content">
+        <p class="eyebrow"><span></span> A LITTLE SURPRISE FOR YOU <span></span></p>
+        <h1 id="intro-title" tabindex="-1">Một chút dịu dàng,<br>dành riêng cho <em>bạn.</em></h1>
+        <p class="intro-note">psst… có một điều nhỏ xíu dành cho các bạn nữ ♡</p>
+        <div class="intro-flower-wrap">
+          <span class="handwritten flower-aside">you deserve<br>flowers <span>⤵</span></span>
+          <button class="bloom-trigger" id="bloom-flower" aria-label="Chạm để bông hoa nở" aria-describedby="bloom-hint"><span id="hero-flower" class="hero-flower" aria-hidden="true"></span></button>
+          <span class="tiny-sparkle sparkle-one" aria-hidden="true">✧</span><span class="tiny-sparkle sparkle-two" aria-hidden="true">✧</span>
+        </div>
+        <div id="intro-before" class="intro-actions">
+          <button class="button primary" id="bloom-button">chạm để hoa nở <span aria-hidden="true">♡</span></button>
+          <p class="microcopy" id="bloom-hint">một cái chạm, hoa nở và nhạc ngân nga</p>
+        </div>
+        <div id="intro-after" class="intro-reveal" hidden>
+          <p class="celebration-date">20 / 10</p>
+          <p class="celebration-label">Happy Vietnamese Women’s Day</p>
+          <button class="button primary" data-next>mở món quà nhỏ này <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene scene-garden" id="scene-1" aria-labelledby="garden-title" hidden>
+      <div class="scene-content wide-content">
+        <p class="eyebrow">02 / THE BLOOMING GARDEN</p>
+        <h2 id="garden-title" tabindex="-1">Mỗi bông hoa,<br>một điều <em>dễ thương.</em></h2>
+        <p class="scene-description">Có những lời chúc đang đợi bạn. Chạm vào một bông hoa nhé ♡</p>
+        <div class="garden" id="garden" aria-label="Sáu bông hoa chứa lời chúc"></div>
+        <p class="garden-count" id="garden-count" role="status">Đã khám phá <strong>0 / 6</strong> bông hoa</p>
+        <p class="secret-message" id="secret-message" hidden>✧ Bí mật nhỏ: điều làm khu vườn này đặc biệt chính là bạn ♡</p>
+        <button class="button secondary" data-next>còn một điều muốn nói… <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="scene scene-letter" id="scene-2" aria-labelledby="letter-title" hidden>
+      <div class="scene-content letter-content">
+        <p class="eyebrow">03 / YOU’VE GOT A LETTER</p>
+        <h2 id="letter-title" tabindex="-1">Có một lá thư<br>gửi đến <em>bạn…</em></h2>
+        <p class="scene-description" id="envelope-hint">Một vài điều nhỏ, nhưng là cả tấm lòng.</p>
+        <div class="letter-stage" id="letter-stage">
+          <button class="envelope" id="envelope" aria-label="Mở lá thư gửi các bạn nữ của lớp" aria-expanded="false" aria-controls="letter-paper">
+            <span class="envelope-back"></span><span class="envelope-insert"></span><span class="envelope-front"></span><span class="envelope-flap"></span>
+            <span class="envelope-ribbon" aria-hidden="true">୨୧</span><span class="wax-seal" aria-hidden="true">♡</span><span class="envelope-address">to: our lovely girls</span>
+          </button>
+          <span class="handwritten envelope-caption" id="envelope-caption">chạm để mở một chút yêu thương ↗</span>
+          <article class="letter-paper" id="letter-paper" tabindex="-1" aria-label="Nội dung lá thư" hidden>
+            <span class="paper-flower" aria-hidden="true">✿</span>
+            <p class="letter-salutation">Gửi các bạn nữ đáng yêu của lớp,</p>
+            <p>Nhân ngày 20/10, chúc các bạn luôn xinh đẹp, tự tin và thật nhiều niềm vui.</p>
+            <p>Mong rằng những năm tháng đại học của chúng ta sẽ có thật nhiều kỷ niệm đẹp, những buổi học vui, những lần cùng nhau vượt deadline và cả những khoảnh khắc rất đỗi bình thường nhưng sau này nhớ lại vẫn thấy đáng yêu.</p>
+            <p>Cảm ơn vì đã là một phần thật đặc biệt của tập thể lớp.</p>
+            <p class="letter-closing">Happy 20/10! ♡</p>
+            <p class="sender-name"></p>
+          </article>
+        </div>
+        <button class="button primary" id="keep-letter" hidden>giữ lá thư này trong tim <span aria-hidden="true">♡</span></button>
+      </div>
+    </section>
+
+    <section class="scene scene-magic" id="scene-3" aria-labelledby="magic-title" hidden>
+      <div class="scene-content">
+        <p class="eyebrow">04 / A LITTLE MAGIC</p>
+        <h2 id="magic-title" tabindex="-1">Một chút may mắn,<br>một ngày <em>lấp lánh.</em></h2>
+        <p class="scene-description">thử chạm vào một chút may mắn hôm nay ✧</p>
+        <div class="gift-stage">
+          <div class="gift-orbit" aria-hidden="true"></div>
+          <span class="gift-star star-a" aria-hidden="true">✧</span><span class="gift-star star-b" aria-hidden="true">✦</span><span class="gift-star star-c" aria-hidden="true">✧</span>
+          <button class="gift" id="gift" aria-label="Mở hộp quà may mắn">
+            <span class="gift-glow"></span><span class="gift-body"><span class="gift-heart">♡</span></span><span class="gift-lid"><span class="gift-bow bow-left"></span><span class="gift-bow bow-right"></span></span>
+          </button>
+        </div>
+        <div class="fortune-card" id="fortune-card"><span class="fortune-label">A NOTE FROM THE UNIVERSE</span><p id="fortune-message" role="status">Vũ trụ đã gói ghém một điều dễ thương cho bạn.</p></div>
+        <button class="button primary" id="magic-button">mở một chút may mắn <span aria-hidden="true">✧</span></button>
+        <button class="text-button scene-next" data-next>mình cùng ước một điều nhé <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="scene scene-wish" id="scene-4" aria-labelledby="wish-title" hidden>
+      <div class="scene-content wish-content">
+        <p class="eyebrow">05 / MAKE A WISH</p>
+        <div class="wish-constellation" aria-hidden="true"><span>✧</span><span>✦</span><span>✧</span></div>
+        <h2 id="wish-title" tabindex="-1">Ước một điều<br><em>nho nhỏ nhé.</em></h2>
+        <p class="scene-description">Cho hôm nay, cho ngày mai, cho chính bạn.</p>
+        <form class="wish-form" id="wish-form" novalidate>
+          <label for="wish-input">Điều bạn mong muốn là…</label>
+          <textarea id="wish-input" name="wish" rows="3" maxlength="240" placeholder="Mong rằng…" aria-describedby="wish-privacy wish-error"></textarea>
+          <div class="wish-input-footer"><span>một điều nhỏ thôi cũng thật đáng quý ♡</span><span id="wish-length">0 / 240</span></div>
+          <p class="field-error" id="wish-error" role="alert"></p>
+          <button class="button primary" type="submit">gửi điều ước vào vườn hoa <span aria-hidden="true">♡</span></button>
+          <p class="microcopy" id="wish-privacy">Chỉ bạn và khu vườn này biết. Điều ước không được lưu hay gửi đi.</p>
+        </form>
+        <div class="wish-result" id="wish-result" hidden>
+          <div class="wish-flight" id="wish-flight"><span id="wish-flower" aria-hidden="true"></span><p id="wish-echo"></p></div>
+          <p class="wish-success" id="wish-success" role="status"></p>
+          <button class="button primary" data-next>đến nơi yêu thương nở rộ <span aria-hidden="true">→</span></button>
+        </div>
+        <button class="text-button scene-next" id="skip-wish" data-next>để dành điều ước cho lần sau <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="scene scene-finale" id="scene-5" aria-labelledby="finale-title" hidden>
+      <div class="flower-wall" id="flower-wall" aria-hidden="true"></div><div class="finale-halo" aria-hidden="true"></div>
+      <div class="scene-content finale-content">
+        <p class="eyebrow">06 / BEAUTIFUL SOULS, THIS IS FOR YOU</p>
+        <div class="finale-small-flower" id="finale-small-flower" aria-hidden="true"></div>
+        <h2 id="finale-title" tabindex="-1">happy <span>20/10</span></h2>
+        <p class="finale-subtitle">luôn xinh theo cách của bạn ♡</p>
+        <p class="recipient-name" id="recipient-name"></p>
+        <p class="finale-message">Chúc những cô gái tuyệt vời của lớp mình một ngày 20/10 thật rực rỡ, thật nhiều tiếng cười và thật nhiều yêu thương.</p>
+        <span class="handwritten finale-signature">you make the world a little softer.</span>
+        <div class="finale-actions"><button class="button secondary" id="download-card">Tải thiệp của mình <span aria-hidden="true">↓</span></button><button class="button primary" id="more-love">Gửi thêm yêu thương <span aria-hidden="true">♡</span></button><button class="text-button" id="restart">Ngắm hoa thêm lần nữa <span aria-hidden="true">↺</span></button></div>
+        <button class="text-button" id="change-recipient">Mở quà cho người khác →</button>
+        <p class="microcopy" id="download-status" role="status"></p>
+      </div>
+      <div class="finale-garden" id="finale-garden" aria-hidden="true"></div>
+    </section>
+    <noscript><p class="noscript-note">Bật JavaScript trong trình duyệt để mở khu vườn và khám phá sáu món quà nhỏ nhé ♡</p></noscript>
+  </main>
+
+  <footer class="site-footer" hidden>
+    <span class="footer-love">made with <span>♡</span> <span class="class-name"></span></span>
+    <nav class="chapter-nav" aria-label="Điều hướng sáu chương">
+      <button class="nav-arrow" id="previous" aria-label="Chương trước" disabled>←</button>
+      <div class="chapter-dots" id="chapter-dots"></div>
+      <button class="nav-arrow" id="next" aria-label="Chương tiếp theo" disabled>→</button>
+    </nav>
+    <span class="chapter-label" id="chapter-label">01 <span>/</span> 06 · a little surprise</span>
+  </footer>
+
+  <dialog class="wish-dialog" id="flower-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-message">
+    <button class="dialog-close" id="dialog-close" aria-label="Đóng lời chúc" autofocus>×</button>
+    <span class="dialog-eyebrow">PICKED WITH LOVE, JUST FOR YOU</span>
+    <div class="dialog-flower" id="dialog-flower" aria-hidden="true"></div>
+    <h2 id="dialog-title"></h2>
+    <p id="dialog-message"></p>
+    <button class="button secondary" id="dialog-keep">nhận một chút yêu thương <span aria-hidden="true">♡</span></button>
+  </dialog>
+  <dialog class="download-dialog" id="download-dialog" aria-labelledby="download-title">
+    <button class="dialog-close" id="download-close" aria-label="Đóng xem trước thiệp">×</button>
+    <h2 id="download-title">Một chút yêu thương để giữ lại ♡</h2>
+    <img id="card-preview" alt="Thiệp hoa chúc mừng 20/10 dành riêng cho bạn">
+    <a class="button primary" id="save-card" download>Lưu ảnh PNG ↓</a>
+    <p class="microcopy">Trên điện thoại, bạn cũng có thể chạm giữ ảnh để lưu vào thư viện.</p>
+  </dialog>
+  <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
+</body>
+</html>
