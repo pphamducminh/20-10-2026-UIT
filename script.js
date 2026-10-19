@@ -658,6 +658,8 @@ const soundtrack = (() => {
   let playRequest = 0, lastChime = -Infinity, lastClick = -Infinity;
   let duckFrame = 0, duckUntil = 0, noiseBuffer;
   const MUSIC_VOLUME = .45;
+  const EFFECTS_VOLUME = .55;
+  const DUCKED_MUSIC_VOLUME = .25;
   const music = new Audio("./music.mp3");
   music.preload = "none";
   music.loop = true;
@@ -675,9 +677,9 @@ const soundtrack = (() => {
     let previous = performance.now();
     function fade(now) {
       if (!ready()) { duckFrame = 0; music.volume = MUSIC_VOLUME; return; }
-      const target = now < duckUntil ? .33 : MUSIC_VOLUME;
+      const target = now < duckUntil ? DUCKED_MUSIC_VOLUME : MUSIC_VOLUME;
       const elapsed = Math.min(now - previous, 80); previous = now;
-      music.volume += (target - music.volume) * (1 - Math.exp(-elapsed / (target < music.volume ? 45 : 180)));
+      music.volume += (target - music.volume) * (1 - Math.exp(-elapsed / (target < music.volume ? 25 : 180)));
       if (now >= duckUntil && Math.abs(music.volume - MUSIC_VOLUME) < .002) {
         music.volume = MUSIC_VOLUME; duckFrame = 0; return;
       }
@@ -688,10 +690,10 @@ const soundtrack = (() => {
   function click() {
     if (!ready() || context.currentTime - lastClick < .09) return;
     lastClick = context.currentTime;
-    // A soft, very short wooden tap, without a sustained competing pitch.
-    note(67, lastClick, .065, .15);
-    note(79, lastClick + .006, .045, .025);
-    duck(90);
+    // A clear wooden tap with a short upper tone for small phone speakers.
+    note(67, lastClick, .09, .20);
+    note(79, lastClick + .006, .065, .05);
+    duck(150);
   }
   function paper() {
     if (!ready() || voices.size >= 30 || context.currentTime - lastChime < .35) return;
@@ -735,7 +737,7 @@ const soundtrack = (() => {
       try {
         if (!context && AudioContextClass) {
           context = new AudioContextClass();
-          master = context.createGain(); master.gain.value = .22;
+          master = context.createGain(); master.gain.value = EFFECTS_VOLUME;
           compressor = context.createDynamicsCompressor();
           master.connect(compressor); compressor.connect(context.destination);
         }
