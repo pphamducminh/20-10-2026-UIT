@@ -7,7 +7,6 @@
   <meta name="description" content="Một khu vườn nhỏ, sáu điều bất ngờ và thật nhiều yêu thương dành cho các cô gái của lớp mình. Happy 20/10!">
   <title>Blooming Wishes — Một chút dịu dàng, dành riêng cho bạn</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Đến nội dung</a>
@@ -183,5 +182,12 @@
     <p class="microcopy">Trên điện thoại, bạn cũng có thể chạm giữ ảnh để lưu vào thư viện.</p>
   </dialog>
   <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
+  <script>
+    // GitHub Pages caches script.js for several minutes. A fresh URL lets
+    // newly added recipients work as soon as visitors reload the page.
+    const appScript = document.createElement("script");
+    appScript.src = `script.js?v=${Date.now()}`;
+    document.body.appendChild(appScript);
+  </script>
 </body>
 </html>
