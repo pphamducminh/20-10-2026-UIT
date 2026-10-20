@@ -21,6 +21,7 @@ const STUDENTS = Object.freeze({
   "26520277": { name: "Kiều Văn Đạt", type: 1 },
   "26520548": { name: "Nguyễn Minh Hiếu", type: 1 },
   "26521936": { name: "Nguyễn Văn Thịnh", type: 1 },
+  "26522227": { name: "Đặng Võ Hoàng Uyên", type: 1 },
   "21703244": { name: "Trần Thảo Vy", type: 2 },
   "01000280": { name: "Trần Diệu Thảo", type: 2 },
   "25520471": { name: "Lê Nguyễn Thu Hà", type: 2 },
