@@ -444,6 +444,20 @@ body { background:radial-gradient(ellipse at 50% 38%,#fffaf5 12%,#fff0f4 48%,#f5
  .download-dialog h2 { font-size:19px; }
  .wish-form textarea { font-size:16px; }
 }
+/* Personalized welcome after a valid student ID. */
+.entry-card { position:relative; overflow:hidden; }
+.entry-card > h1, .entry-card > .eyebrow, .entry-card > .scene-description, .entry-card > .microcopy, #entry-form { transition:opacity .35s ease, transform .5s var(--ease); }
+.entry-gate.is-opening .entry-card > h1, .entry-gate.is-opening .entry-card > .eyebrow, .entry-gate.is-opening .entry-card > .scene-description, .entry-gate.is-opening .entry-card > .microcopy, .entry-gate.is-opening #entry-form { opacity:0; transform:translateY(12px); pointer-events:none; }
+.entry-gate.is-opening .entry-flower { position:relative; z-index:2; animation:welcome-flower 1.5s var(--spring) both; }
+.entry-welcome { position:absolute; z-index:3; left:24px; right:24px; top:46%; text-align:center; animation:welcome-name .7s var(--ease) .2s both; }
+#entry-welcome-name { font-size:clamp(23px,4vw,32px); font-weight:500; line-height:1.5; letter-spacing:-.7px; margin:15px 0; color:#a6476b; overflow-wrap:anywhere; }
+.entry-welcome .handwritten { display:block; font-size:16px; line-height:1.8; }
+.entry-gate.is-opening .entry-card::after { content:""; position:absolute; inset:15%; border-radius:50%; background:radial-gradient(#ffe7b7a0,transparent 65%); pointer-events:none; animation:welcome-glow 1.6s ease both; }
+.entry-gate.is-departing { animation:welcome-depart .4s ease both; }
+@keyframes welcome-flower { to { transform:translateY(40px) scale(1.45); filter:drop-shadow(0 0 22px #fff4d4); } }
+@keyframes welcome-name { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+@keyframes welcome-glow { from { opacity:0; transform:scale(.5); } to { opacity:1; transform:scale(1.5); } }
+@keyframes welcome-depart { to { opacity:0; transform:translateY(-10px) scale(1.02); } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
   #petal-canvas { display: none; }

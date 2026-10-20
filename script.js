@@ -142,7 +142,7 @@ function burstAt(element, count = 24, variant = 0) {
 }
 
 function populateArtwork() {
-  $("#entry-flower").innerHTML = flowerSVG("blush");
+  $("#entry-flower").innerHTML = flowerSVG("blush", { bud: true });
   $("#hero-flower").innerHTML = flowerSVG("rose", { bud: true, stem: true });
   $("#wish-flower").innerHTML = flowerSVG("blush", { bud: true });
   $("#finale-small-flower").innerHTML = flowerSVG("cream", { bud: true });
@@ -809,6 +809,16 @@ function enterGarden(event) {
     input.setAttribute("aria-invalid", "true"); input.focus(); return;
   }
   const name = STUDENTS[id];
+  // Play synchronously from submit/Enter so mobile autoplay rules allow it.
+  soundtrack.startFromGesture();
+  state.transitioning = true;
+  updateNavigation();
+  input.removeAttribute("aria-invalid");
+  $("#entry-error").textContent = "";
+  input.blur();
+  input.disabled = true;
+  $("#entry-form button").disabled = true;
+  $("#entry-form").setAttribute("aria-busy", "true");
   recipient = { name, shortName: id === "26521177" ? "Ý Ly" : name.split(" ").at(-1), special: id === "26521177" };
   recipientVersion++;
   $(".intro-note").textContent = recipient.special ? "psst… Ý Ly ơi, có một vườn thương bé xíu dành riêng cho cậu ♡" : `${name} ơi, có một điều nhỏ xíu dành riêng cho bạn ♡`;
@@ -821,9 +831,29 @@ function enterGarden(event) {
   $(".finale-message").textContent = recipientMessage();
   $(".finale-signature").textContent = recipient.special ? "a little hug, just for Ý Ly ♡" : "you make the world a little softer.";
   document.body.classList.toggle("special-recipient", recipient.special);
-  $("#entry-gate").hidden = true; $("#main").hidden = false; $(".site-footer").hidden = false;
-  input.value = ""; $("#intro-title").focus({ preventScroll: true });
-  window.scrollTo({ top: 0, behavior: "instant" });
+  const gate = $("#entry-gate");
+  $("#entry-welcome-name").textContent = recipient.special ? "Ý Ly ơi, chào cậu ♡" : `${name} ơi, chào bạn ♡`;
+  $("#entry-welcome").hidden = false;
+  gate.classList.add("is-opening");
+  $("#entry-flower .flower-art").classList.remove("is-bud");
+  later(() => {
+    burstAt($("#entry-flower"), 32, 1);
+    soundtrack.chime(3);
+  }, 180);
+  later(() => gate.classList.add("is-departing"), 1250);
+  later(() => {
+    gate.hidden = true; $("#main").hidden = false; $(".site-footer").hidden = false;
+    input.value = ""; input.disabled = false; $("#entry-form button").disabled = false;
+    $("#entry-form").removeAttribute("aria-busy");
+    scenes[0].classList.add("is-entering");
+    $("#intro-title").focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: "instant" });
+    later(() => {
+      scenes[0].classList.remove("is-entering");
+      state.transitioning = false;
+      updateNavigation();
+    }, 650);
+  }, 1650);
 }
 
 function changeRecipient() {
@@ -836,6 +866,10 @@ function changeRecipient() {
   $("#download-status").textContent = "";
   $("#main").hidden = true; $(".site-footer").hidden = true; $("#entry-gate").hidden = false;
   $("#entry-form").reset(); $("#entry-error").textContent = "";
+  $("#entry-gate").classList.remove("is-opening", "is-departing");
+  $("#entry-welcome").hidden = true;
+  $("#entry-welcome-name").textContent = "";
+  $("#entry-flower .flower-art").classList.add("is-bud");
   document.body.classList.remove("special-recipient");
   $("#student-id").focus();
   window.scrollTo({ top: 0, behavior: "instant" });
