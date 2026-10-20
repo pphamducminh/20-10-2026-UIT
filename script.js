@@ -4,22 +4,25 @@
 const CLASS_NAME = "Lớp chúng mình";
 const SENDER_NAME = "Từ các bạn trong lớp, with love ♡";
 // Client-side recipient lookup, not secure authentication. Never persisted.
+// type: 1 = cùng lớp; type: 2 = người thân quen ngoài lớp.
+// Thêm người: "12345678": { name: "Họ và tên", type: 2 },
+// special chỉ dùng cho lời chúc riêng của Ý Ly.
 const STUDENTS = Object.freeze({
-  "26520496": "Nguyễn Thị Thu Hân",
-  "26520522": "Nguyễn Thu Hiền",
-  "26521078": "Phùng Yến Lam",
-  "26521334": "Ôn Huỳnh Hiếu Ngân",
-  "26521486": "Lê Uyển Nhi",
-  "26521883": "Đinh Thái Thanh Thảo",
-  "26521623": "Lê Trần Thiên Phúc",
-  "26521429": "Trương Nam Nguyên",
-  "21703244": "Trần Thảo Vy",
-  "01000280": "Trần Diệu Thảo",
-  "25520471": "Lê Nguyễn Thu Hà",
-  "51150102": "Phạm Thị Như Phương",
-  "21002815": "Trần Yến An",
-  "54010035": "Lê Hoàng Thảo Ly",
-  "26521177": "Lương Ý Ly"
+  "26520496": { name: "Nguyễn Thị Thu Hân", type: 1 },
+  "26520522": { name: "Nguyễn Thu Hiền", type: 1 },
+  "26521078": { name: "Phùng Yến Lam", type: 1 },
+  "26521334": { name: "Ôn Huỳnh Hiếu Ngân", type: 1 },
+  "26521486": { name: "Lê Uyển Nhi", type: 1 },
+  "26521883": { name: "Đinh Thái Thanh Thảo", type: 1 },
+  "26521623": { name: "Lê Trần Thiên Phúc", type: 1 },
+  "26521429": { name: "Trương Nam Nguyên", type: 1 },
+  "21703244": { name: "Trần Thảo Vy", type: 2 },
+  "01000280": { name: "Trần Diệu Thảo", type: 2 },
+  "25520471": { name: "Lê Nguyễn Thu Hà", type: 2 },
+  "51150102": { name: "Phạm Thị Như Phương", type: 2 },
+  "21002815": { name: "Trần Yến An", type: 2 },
+  "54010035": { name: "Lê Hoàng Thảo Ly", type: 2 },
+  "26521177": { name: "Lương Ý Ly", type: 1, special: true, shortName: "Ý Ly" }
 });
 let recipient = null;
 let cardURL = null;
@@ -27,7 +30,33 @@ let cardBusy = false;
 let recipientVersion = 0;
 const specialMessage = "Ý Ly ơi, gửi cậu một vườn hoa và một cái ôm bé xíu! Chúc cậu cười thật nhiều, deadline ngoan ngoãn và ngày nào cũng có điều dễ thương tìm đến. Hôm nay cứ nhận hoa, còn đáng yêu thì cậu làm sẵn rồi ♡";
 function recipientMessage() {
-  return recipient?.special ? specialMessage : `Chúc ${recipient?.name || "bạn"} một ngày 20/10 thật rực rỡ, thật nhiều tiếng cười và thật nhiều yêu thương. Luôn tự tin và xinh theo cách của mình nhé ♡`;
+  if (recipient?.special) return specialMessage;
+  if (recipient?.type === 2) return `Gửi ${recipient.name} một ngày 20/10 thật nhiều niềm vui và những điều dịu dàng. Chúc bạn học tập thật tốt, deadline nhẹ nhàng và luôn có thời gian cho điều mình thích. Luôn tự tin và xinh theo cách của mình nhé ♡`;
+  return `Chúc ${recipient?.name || "bạn"} một ngày 20/10 thật rực rỡ, thật nhiều tiếng cười và yêu thương. Mong lớp mình sẽ có thêm thật nhiều kỷ niệm đẹp cùng nhau. Luôn tự tin và xinh theo cách của mình nhé ♡`;
+}
+function recipientSender() {
+  if (recipient?.special) return "Từ tớ, gửi cậu một chút yêu thương ♡";
+  return recipient?.type === 2 ? "Gửi bạn chút yêu thương, with love ♡" : SENDER_NAME;
+}
+function recipientLetter() {
+  if (recipient.special) return [
+    "Gửi Ý Ly, cô bạn đáng yêu của tớ,",
+    "Happy 20/10, Ý Ly! Tớ gói một chút dịu dàng, một chút lấp lánh và thật nhiều niềm vui vào lá thư này cho cậu.",
+    "Mong cậu luôn có người nghe những câu chuyện nhỏ, có một món ngon vào ngày mệt và một lý do để mỉm cười mỗi sáng. Deadline có thể hơi khó chiều, nhưng nhớ nhẹ nhàng với bản thân nha. Cậu xứng đáng với những điều thật dễ thương.",
+    "Cảm ơn vì cậu là cậu. Gửi một cái ôm bé xíu, nhận giúp tớ nhé ♡"
+  ];
+  if (recipient.type === 2) return [
+    `Gửi ${recipient.name} thân mến,`,
+    `Nhân ngày 20/10, gửi ${recipient.shortName} một bó hoa nhỏ và những lời chúc thật lòng. Chúc bạn luôn vui vẻ, tự tin và được yêu thương theo cách mình xứng đáng.`,
+    "Mong những ngày đi học của bạn có thật nhiều niềm vui, bài vở thuận lợi, điểm số như ý và deadline cũng nhẹ nhàng một chút. Giữa những lúc bận rộn, nhớ dành thời gian cho điều mình thích và nghỉ ngơi thật đủ nhé.",
+    "Thật vui vì chúng ta có duyên quen biết nhau. Chúc những điều tốt lành sẽ ghé thăm bạn, hôm nay và cả những ngày sau nữa ♡"
+  ];
+  return [
+    `Gửi ${recipient.name} thân mến,`,
+    `Nhân ngày 20/10, chúc ${recipient.shortName} luôn xinh đẹp, tự tin và thật nhiều niềm vui.`,
+    "Mong rằng những năm tháng đại học của chúng ta sẽ có thật nhiều kỷ niệm đẹp, những buổi học vui, những lần cùng nhau vượt deadline và cả những khoảnh khắc rất đỗi bình thường nhưng sau này nhớ lại vẫn thấy đáng yêu.",
+    `Cảm ơn ${recipient.shortName} vì đã là một phần thật đặc biệt của tập thể lớp.`
+  ];
 }
 
 const flowerWishes = [
@@ -47,6 +76,24 @@ const randomMessages = [
   "Một ngày tuyệt vời đang chờ bạn phía trước.",
   "Bạn chính là một bông hoa rất đặc biệt ♡"
 ];
+
+// Dạng 2 vẫn có lời chúc học tập, chỉ đổi những câu chưa phù hợp với người ngoài lớp.
+const personalFlowerWishes = flowerWishes.map((wish, index) => index === 5
+  ? { ...wish, title: "Nhiều niềm vui, ít âu lo", text: "Chúc bạn có thật nhiều ngày vui, nhiều ảnh xinh và thật ít âu lo trong cuộc sống 💗" }
+  : { ...wish });
+const personalRandomMessages = [...randomMessages];
+function getFlowerWish(index) {
+  return recipient?.type === 2 ? { ...flowerWishes[index], ...personalFlowerWishes[index] } : flowerWishes[index];
+}
+function giftMessages() { return recipient?.type === 2 ? personalRandomMessages : randomMessages; }
+function updateRecipientLabels() {
+  $$(".sender-name").forEach(el => { el.textContent = recipientSender(); });
+  $$(".class-name").forEach(el => { el.textContent = recipient?.special ? "just for you" : recipient?.type === 2 ? "gửi một người thân quen" : CLASS_NAME; });
+  $$(".garden-flower").forEach((button, i) => {
+    const seen = state.seen.has(i);
+    button.setAttribute("aria-label", `${seen ? "Đã khám phá" : "Khám phá"} bông hoa ${i + 1}: ${getFlowerWish(i).title}${seen ? ". Đọc lại lời chúc" : ""}`);
+  });
+}
 
 const sceneConfig = [
   { label: "a little surprise", title: "Một điều bất ngờ", heading: "intro-title" },
@@ -292,7 +339,7 @@ function bloom() {
 function openFlower(button) {
   if (state.transitioning || $("#flower-dialog").open) return;
   const index = Number(button.dataset.flower);
-  const wish = flowerWishes[index];
+  const wish = getFlowerWish(index);
   state.seen.add(index);
   soundtrack.chime(index);
   button.classList.add("is-seen", "is-picked");
@@ -337,7 +384,7 @@ function openLetter() {
 
 function nextMessage() {
   if (!state.messageBag.length) {
-    state.messageBag = randomMessages.map((_, i) => i);
+    state.messageBag = giftMessages().map((_, i) => i);
     for (let i = state.messageBag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [state.messageBag[i], state.messageBag[j]] = [state.messageBag[j], state.messageBag[i]];
@@ -347,7 +394,7 @@ function nextMessage() {
     }
   }
   state.lastMessage = state.messageBag.pop();
-  return randomMessages[state.lastMessage];
+  return giftMessages()[state.lastMessage];
 }
 
 function openGift() {
@@ -430,7 +477,7 @@ function resetExperience() {
   $("#intro-after").hidden = true;
   $$(".garden-flower").forEach((button, i) => {
     button.classList.remove("is-seen", "is-picked");
-    button.setAttribute("aria-label", `Khám phá bông hoa ${i + 1}: ${flowerWishes[i].title}`);
+    button.setAttribute("aria-label", `Khám phá bông hoa ${i + 1}: ${getFlowerWish(i).title}`);
   });
   $("#garden-count").innerHTML = 'Đã khám phá <strong>0 / 6</strong> bông hoa';
   $("#secret-message").hidden = true;
@@ -811,7 +858,9 @@ function enterGarden(event) {
     $("#entry-error").textContent = !/^[0-9]{8}$/.test(id) ? "Nhập đủ 8 chữ số MSSV nhé." : "MSSV này chưa có trong danh sách nhận quà. Bạn kiểm tra lại nhé ♡";
     input.setAttribute("aria-invalid", "true"); input.focus(); return;
   }
-  const name = STUDENTS[id];
+  // Keep accepting the old "MSSV": "Tên" format as type 1.
+  const entry = typeof STUDENTS[id] === "string" ? { name: STUDENTS[id], type: 1 } : STUDENTS[id];
+  const name = entry.name;
   // Play synchronously from submit/Enter so mobile autoplay rules allow it.
   soundtrack.startFromGesture();
   state.transitioning = true;
@@ -822,14 +871,14 @@ function enterGarden(event) {
   input.disabled = true;
   $("#entry-form button").disabled = true;
   $("#entry-form").setAttribute("aria-busy", "true");
-  recipient = { name, shortName: id === "26521177" ? "Ý Ly" : name.split(" ").at(-1), special: id === "26521177" };
+  recipient = { name, type: entry.type === 2 ? 2 : 1, shortName: entry.shortName || name.split(" ").at(-1), special: entry.special === true };
   recipientVersion++;
   $(".intro-note").textContent = recipient.special ? "psst… Ý Ly ơi, có một vườn thương bé xíu dành riêng cho cậu ♡" : `${name} ơi, có một điều nhỏ xíu dành riêng cho bạn ♡`;
-  $(".letter-salutation").textContent = recipient.special ? "Gửi Ý Ly, cô bạn đáng yêu của tớ," : `Gửi ${name} thân mến,`;
+  const letter = recipientLetter();
   const paragraphs = $$("#letter-paper p");
-  paragraphs[1].textContent = recipient.special ? "Happy 20/10, Ý Ly! Tớ gói một chút dịu dàng, một chút lấp lánh và thật nhiều niềm vui vào lá thư này cho cậu." : `Nhân ngày 20/10, chúc ${recipient.shortName} luôn xinh đẹp, tự tin và thật nhiều niềm vui.`;
-  paragraphs[2].textContent = recipient.special ? "Mong cậu luôn có người nghe những câu chuyện nhỏ, có một món ngon vào ngày mệt và một lý do để mỉm cười mỗi sáng. Deadline có thể hơi khó chiều, nhưng nhớ nhẹ nhàng với bản thân nha. Cậu xứng đáng với những điều thật dễ thương." : "Mong rằng những năm tháng đại học của chúng ta sẽ có thật nhiều kỷ niệm đẹp, những buổi học vui, những lần cùng nhau vượt deadline và cả những khoảnh khắc rất đỗi bình thường nhưng sau này nhớ lại vẫn thấy đáng yêu.";
-  paragraphs[3].textContent = recipient.special ? "Cảm ơn vì cậu là cậu. Gửi một cái ôm bé xíu, nhận giúp tớ nhé ♡" : `Cảm ơn ${recipient.shortName} vì đã là một phần thật đặc biệt của tập thể lớp.`;
+  letter.forEach((text, i) => { paragraphs[i].textContent = text; });
+  $("#envelope").setAttribute("aria-label", `Mở lá thư gửi ${name}`);
+  updateRecipientLabels();
   $("#recipient-name").textContent = `dành riêng cho ${name}`;
   $(".finale-message").textContent = recipientMessage();
   $(".finale-signature").textContent = recipient.special ? "a little hug, just for Ý Ly ♡" : "you make the world a little softer.";
@@ -937,7 +986,7 @@ async function downloadCard() {
       ctx.font = '27px "Trebuchet MS", Arial, sans-serif';
       wrapCardText(ctx, recipientMessage(), 800, nameBottom + 22, 850, 43);
       ctx.fillStyle = "#b46b88"; ctx.font = 'italic 25px Georgia, serif';
-      ctx.fillText(recipient.special ? "Gửi Ý Ly một cái ôm bé xíu, with love ♡" : SENDER_NAME, 800, 925);
+      ctx.fillText(recipient.special ? "Gửi Ý Ly một cái ôm bé xíu, with love ♡" : recipientSender(), 800, 925);
       const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
       if (!blob) throw new Error("PNG export failed");
       if (version !== recipientVersion) return;
