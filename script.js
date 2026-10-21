@@ -29,6 +29,7 @@ const STUDENTS = Object.freeze({
   "21002815": { name: "Trần Yến An", type: 2 },
   "54010035": { name: "Lê Hoàng Thảo Ly", type: 2 },
   "22062007": { name: "Nguyễn Anh Thư", type: 2 },
+  "16062004": { name: "Mạnh Thị Diễm Hương", type: 2 },
   "26521177": { name: "Lương Ý Ly", type: 1, special: true, shortName: "Ý Ly" }
 });
 let recipient = null;
